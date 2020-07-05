@@ -5,31 +5,44 @@ import java.util.*;
 
 public class Logs {
 
-    private Queue<Map<Node, Node>>predecessorsLog;
-    private Queue<Map<Node, Integer>> distancesLog;
+    private Queue<String> distancesLog;
     private Queue<Node> visitedQueue;
 
     public Logs(){
 
-        predecessorsLog = new LinkedList<>();
 
         distancesLog = new LinkedList<>();
 
         visitedQueue = new LinkedList<>();
 
     };
+
     public void addLogs(Map<Node, Node> predecessors, Map<Node, Integer> distances, Node visited){
 
-        predecessorsLog.add(predecessors);
 
-        distancesLog.add(distances);
+        String disTmp = "Destination Now:\n";
 
+        for(Node node : distances.keySet()) {
+            if (distances.get(node) != Integer.MAX_VALUE) {
+
+                disTmp += node.nodeToString() + ": ";
+                disTmp += distances.get(node) + "\n";
+            }
+        }
+        for(Node node : distances.keySet()){
+            if(distances.get(node) == Integer.MAX_VALUE){
+                disTmp += node.nodeToString() + ": ";
+                disTmp += "\u221E\n";}
+
+        }
+        distancesLog.add(disTmp);
         visitedQueue.add(visited);
 
     }
-    public Map<Node, Node>  getPredecessorsLog() { return predecessorsLog.remove();}
 
-    public Map<Node, Integer> getDistancesLog(){return distancesLog.remove();}
+
+
+    public String getDistancesLog(){return distancesLog.remove();}
 
     public Node getVisitedLog() {
         return visitedQueue.remove();
@@ -38,10 +51,9 @@ public class Logs {
     public boolean isEmptyVisited(){
         return visitedQueue.isEmpty();
     }
-    //вывод меток на каком-то шаге
-    //Какая вершина добавленна на каком-то шаге
+
     public void clear(){
-        predecessorsLog.clear();
+;
         distancesLog.clear();
         visitedQueue.clear();
     }

@@ -25,6 +25,8 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 
     private java.util.List<Node> path = null;
 
+    private java.util.List<Node> tmpPath = null;
+
     private Point cursor;
 
     public GraphPanel(Graph graph){
@@ -36,6 +38,11 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 
     public void setPath(List<Node> path) {
         this.path = path;
+        hoveredEdge = null;
+        repaint();
+    }
+    public void setTmpPath(List<Node> path) {
+        this.tmpPath = path;
         hoveredEdge = null;
         repaint();
     }
@@ -52,9 +59,10 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 
         drawUtils = new DrawUtils(graphics2d);
 
-        if(graph.isSolved() && graph.stepRealisation == 2){
+        if(path != null && graph.stepRealisation == 2){
             drawUtils.drawPath(path);
         }
+
 
         if(selectedNode != null && cursor != null){
             Edge e = new Edge(selectedNode, new Node(cursor));
@@ -80,73 +88,61 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
                 }
             } else  {
                 if(node.status == 0) drawUtils.drawNode(node);
-                else if(node.status == 1) drawUtils.drawCurrentNode(node);
+                else if(node.status == 1) {
+                    drawUtils.drawCurrentNode(node);
+                }
                 else drawUtils.drawDestinationNode(node);
             }if (graph.isSource(node))  drawUtils.drawSourceNode(node);
-            System.out.println("teper' on i gay i pidor");
         }
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
 
-        Node selected = null;
-        for(Node node : graph.getNodes()) {
-            if(DrawUtils.isWithinBounds(e, node.getCoord())){
-                selected = node;
-                break;
+            Node selected = null;
+            for(Node node : graph.getNodes()) {
+                if(DrawUtils.isWithinBounds(e, node.getCoord())){
+                    selected = node;
+                    break;
+                }
             }
-        }
-
-        if(selected!=null) {
-            if(e.isControlDown() && e.isShiftDown()){
-                graph.deleteNode(selected);
-                graph.setSolved(false);
-                repaint();
-                return;
-            } else if(e.isControlDown() && graph.isSolved()){
-                path = selected.getPath();
-                repaint();
-                return;
-            } else if(e.isShiftDown()){
-                graph.setSolved(false);
-                repaint();
-                return;
-            }
-        }
-
-        if(hoveredEdge!=null){
-            if(e.isControlDown() && e.isShiftDown()){
-                graph.getEdges().remove(hoveredEdge);
-                hoveredEdge = null;
-                graph.setSolved(false);
-                repaint();
-                return;
-            }
-
-            String input = JOptionPane.showInputDialog("Enter weight for " + hoveredEdge.toString()
-                                                        + " : ");
-            try {
-                int weight = Integer.parseInt(input);
-                if (weight > 0) {
-                    hoveredEdge.setWeight(weight);
+            if(selected!=null && graph.stepRealisation == 0) {
+                if(e.isControlDown() && e.isShiftDown()){
+                    graph.deleteNode(selected);
                     graph.setSolved(false);
                     repaint();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Weight should be positive");
+                    return;
+                } else if(e.isControlDown() && graph.isSolved()){
+                    path = selected.getPath();
+                    repaint();
+                    return;
+                } else if(e.isShiftDown()){
+                    if(SwingUtilities.isLeftMouseButton(e)){
+                        graph.setSource(selected);
+                    } else if(SwingUtilities.isRightMouseButton(e)) {
+
+                    }else
+                        return;
+                    graph.setSolved(false);
+                    repaint();
+                    return;
                 }
-            } catch (NumberFormatException nfe) {}
-            return;
+            }
+        if((e.isShiftDown() || graph.stepRealisation == 2) && selected != null && SwingUtilities.isRightMouseButton(e))  {
+            if(!graph.isSource(selected)) {
+                setPath(selected.getPath());
+            }
+            else JOptionPane.showMessageDialog(null, "Source can't be set as Destination");
         }
 
         for(Node node : graph.getNodes()) {
-            if(DrawUtils.isOverlapping(e, node.getCoord())){
+            if(DrawUtils.isOverlapping(e, node.getCoord()) && !(e.isShiftDown() || graph.stepRealisation == 2) && selected != null && SwingUtilities.isRightMouseButton(e)){
                 JOptionPane.showMessageDialog(null, "Overlapping Node can't be created");
                 return;
             }
         }
 
-        graph.addNode(e.getPoint());
+        if(graph.stepRealisation == 0)graph.addNode(e.getPoint());
         graph.setSolved(false);
         repaint();
     }
@@ -228,20 +224,9 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
         repaint();
     }
 
-    public void DestNode(Node current){
-        drawUtils.drawDestinationNode(current);
-    }
-
-    public void SourceNode(Node current){
-        drawUtils.drawSourceNode(current);
-    }
-
-    public void CurrNode(Node current){
-        drawUtils.drawCurrentNode(current);
-    }
-
     public void reset(){
         graph.clear();
+        path.clear();
         selectedNode = null;
         hoveredNode = null;
         hoveredEdge = null;

@@ -158,6 +158,11 @@ public class DijkstraAlgorithm {
 
         return path;
     }
+
+    public Graph getGraph() {
+        return graph;
+    }
+
     public void clear(){
         dLog.clear();
         unvisited.clear();

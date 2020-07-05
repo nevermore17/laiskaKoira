@@ -81,6 +81,22 @@ public class DrawUtils {
         drawBoldEdge(edge);
     }
 
+    public void drawTmpPath(java.util.List<Node> path) {
+        List<Edge> edges = new ArrayList<>();
+        for(int i = 0; i < path.size()-1; i++) {
+            edges.add(new Edge(path.get(i), path.get(i+1)));
+        }
+
+        for(Edge edge : edges) {
+            drawPath(edge);
+        }
+    }
+
+    public void draTmpPath(Edge edge) {
+        g.setColor(parseColor("#B2EBF2"));
+        drawBoldEdge(edge);
+    }
+
     public void drawHoveredEdge(Edge edge) {
         g.setColor(parseColor("#E1BEE7"));
         drawBoldEdge(edge);
@@ -190,9 +206,11 @@ public class DrawUtils {
     private static int sqr(int x) {
         return x * x;
     }
+
     private static int dist2(Point v, Point w) {
         return sqr(v.x - w.x) + sqr(v.y - w.y);
     }
+
     private static int distToSegmentSquared(Point p, Point v, Point w) {
         double l2 = dist2(v, w);
         if (l2 == 0) return dist2(p, v);
@@ -204,6 +222,7 @@ public class DrawUtils {
                 (int)(v.y + t * (w.y - v.y))
         ));
     }
+
     private static int distToSegment(Point p, Point v, Point w) {
         return (int) Math.sqrt(distToSegmentSquared(p, v, w));
     }

@@ -9,6 +9,7 @@ public class Graph {
     private int count = 1;
     private List<Node> nodes = new ArrayList<>();          //Лист Вершин графа
     private List<Edge> edges = new ArrayList<>();          //ЛИСТ Ребер графа
+    private Node destination = null;
 
     private Node source;                                   //Стартовая Вершина
 
@@ -51,11 +52,9 @@ public class Graph {
         }
     }
 
-
     public Node getSource(){
         return source;
     }
-
 
     public boolean isSource(Node node){
         return node == source;
@@ -98,6 +97,12 @@ public class Graph {
         nodes.remove(node);
     }
 
+    public void setDestination(Node node){
+        destination = node;
+    }
+    public Node getDestination(){
+        return destination;
+    }
     public void clear(){                                   //Чистит граф
         count = 1;
         nodes.clear();

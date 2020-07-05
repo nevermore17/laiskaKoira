@@ -11,6 +11,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.sql.SQLOutput;
+import java.util.Map;
 
 public class MainWindow extends JPanel {
 
@@ -92,13 +94,13 @@ public class MainWindow extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try{
-
                     switch (state){
                         case 0:
                             System.out.println("Algoritm work");
                             graph.stepRealisation = 1;
                             dijkstraAlgorithm = new DijkstraAlgorithm(graph);
                             dijkstraAlgorithm.run();
+                            graph = dijkstraAlgorithm.getGraph();
                             state = 1;
                             node = dijkstraAlgorithm.dLog.getVisitedLog();
                             for(Node nodeE : graph.getNodes()){
@@ -114,30 +116,39 @@ public class MainWindow extends JPanel {
                             state = 2;
                             repaint();
                             graph.stepRealisation = 2;
+                            for(Node nodeE : graph.getNodes()){
+                                nodeE.status = 0;
+                            }
+                            System.out.println("Check Graph");
 
                             break;
                         }
                             node.status = 2;
+
                             for(Node nodeE : graph.getNodes()){
-                                if(nodeE.getId() == node.getId()){
+
+                                if(nodeE.getId() == node.getId())
+
                                     nodeE.status = 2;
-                                }
+
                             }
-                              node = dijkstraAlgorithm.dLog.getVisitedLog();
+                            node = dijkstraAlgorithm.dLog.getVisitedLog();
                             for(Node nodeE : graph.getNodes()){
+
                                 if(nodeE.getId() == node.getId()){
                                     nodeE.status = 1;
+
                                 }
                             }
-                            System.out.println(node.nodeToString());
+
+                            System.out.println("Now visited: " + node.nodeToString());
+                            System.out.println(dijkstraAlgorithm.dLog.getDistancesLog());
                             repaint();
                             break;
                         case 2:
                             System.out.println("End of work");
                             state = 0;
-                            for(Node nodeE : graph.getNodes()){
-                                nodeE.status = 0;
-                            }
+
                             dijkstraAlgorithm.clear();
                             graph.stepRealisation = 0;
                             repaint();
