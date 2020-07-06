@@ -133,7 +133,7 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
             }
         }
 
-        if(hoveredEdge!=null){
+        if(hoveredEdge!=null && graph.stepRealisation == 0){
             if(e.isControlDown() && e.isShiftDown()){
                 graph.getEdges().remove(hoveredEdge);
                 hoveredEdge = null;
