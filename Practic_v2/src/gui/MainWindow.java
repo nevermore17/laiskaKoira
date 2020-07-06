@@ -168,13 +168,15 @@ public class MainWindow extends JPanel {
             public void actionPerformed(ActionEvent actionEvent) {
                 state = 0;
                 graph.stepRealisation = 0;
-                graphPanel.reset();
+
                 fileChooser = new FileChooserTest();
                 graphPanel.add(fileChooser.label);
                 try {
+                    try{
                     fileChooser.file.list();
                     fileContent = fileChooser.readUsingFiles(fileChooser.file.getPath());
                     System.out.println(fileContent);
+                    graphPanel.reset();
                         graph = new Graph();
                         Node sourceNode = null, tmpNode1 = null, tmpNode2 = null;
                         Edge tmpEdge = null;
@@ -251,6 +253,9 @@ public class MainWindow extends JPanel {
                         graph.setSolved(false);
                         graphPanel.uResetGraphPanel(graph);
                         repaint();
+                } catch (NullPointerException e){
+                    JOptionPane.showMessageDialog(null, "You didn't upload file");
+                    fileChooser.closeWind(); }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -270,6 +275,7 @@ public class MainWindow extends JPanel {
             button.setContentAreaFilled(false);
         } catch (IOException e) {
             e.printStackTrace();
+
         }
     }
 

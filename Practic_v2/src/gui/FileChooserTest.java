@@ -29,5 +29,8 @@ public class FileChooserTest extends JFrame{
         setVisible(false);
         return new String(Files.readAllBytes(Paths.get(fileName)));
     }
+    public void closeWind() throws IOException {
+        setVisible(false);
 
+    }
 }
