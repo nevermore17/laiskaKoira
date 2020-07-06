@@ -58,12 +58,16 @@ public class MainWindow extends JPanel {
     private void setButtons(){
         JButton run = new JButton();
         setupIcon(run, "run");
+        run.setToolTipText("Запуск алгоритма");
         JButton reset = new JButton();
         setupIcon(reset, "reset");
+        reset.setToolTipText("Очищение холста");
         final JButton info = new JButton();
         setupIcon(info, "info");
+        info.setToolTipText("Инструкция");
         JButton file = new JButton();
         setupIcon(file, "file");
+        file.setToolTipText("Ввод из файла");
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(DrawUtils.parseColor("#DDDDDD"));
