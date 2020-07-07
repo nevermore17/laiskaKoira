@@ -124,6 +124,11 @@ public class MainWindow extends JPanel {
                         case 1:
                             if(dijkstraAlgorithm.dLog.isEmptyVisited()) {
                                 state = 2;
+                                for(Node node: graph.getNodes()){
+                                    if(!node.equals(graph.getSource())){
+                                        System.out.println(dijkstraAlgorithm.getPathToString(node));
+                                    }
+                                }
                                 repaint();
                                 graph.stepRealisation = 2;
                                 for(Node nodeE : graph.getNodes()){
@@ -153,6 +158,8 @@ public class MainWindow extends JPanel {
 
                             System.out.println("Now visited: " + node.nodeToString());
                             System.out.println(dijkstraAlgorithm.dLog.getDistancesLog());
+                            System.out.println(dijkstraAlgorithm.dLog.getEndDistancesLog());
+                            System.out.println(dijkstraAlgorithm.dLog.getEdgeLog());
                             repaint();
                             break;
                         case 2:
@@ -170,60 +177,62 @@ public class MainWindow extends JPanel {
         file.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+
                 state = 0;
                 graph.stepRealisation = 0;
-
                 fileChooser = new FileChooserTest();
                 graphPanel.add(fileChooser.label);
+
                 try {
-                    try{
-                    fileChooser.file.list();
-                    fileContent = fileChooser.readUsingFiles(fileChooser.file.getPath());
-                    System.out.println(fileContent);
-                    graphPanel.reset();
+                    try {
+                        fileChooser.file.list();
+                        fileContent = fileChooser.readUsingFiles(fileChooser.file.getPath());
+                        for(char cr : fileContent.toCharArray()) {
+                            if(cr == '-'){
+                                JOptionPane.showMessageDialog(null, "Negativ number");
+                                return;
+                            }
+                        }
+                        graphPanel.reset();
                         graph = new Graph();
                         Node sourceNode = null, tmpNode1 = null, tmpNode2 = null;
                         Edge tmpEdge = null;
-                        Integer sourceId = 0,weith;
+                        Integer sourceId = 0, weith;
                         Integer[] id = new Integer[2];
-                        boolean flag1 = true, flag2 = true;;
-                        System.out.println(fileContent.split("\n").length);
-                        for(String line: fileContent.split("\n")){
-                            System.out.println("line: " + line);
-                            if(line.split(" ").length == 1) {
+                        boolean flag1 = true, flag2 = true;
+                        for (String line : fileContent.split("\n")) {
+                            if (line.split(" ").length == 1) {
 
-                                try{
+                                try {
                                     sourceId = Integer.parseInt(line.replaceAll("\\D", ""));
-                                } catch (NumberFormatException e){
+                                } catch (NumberFormatException e) {
                                     System.out.println("Sourse Exeption");
+                                    graphPanel.reset();
                                 }
-                            }
-                            else{
+                            } else {
 
-                                try{
-                                    for(int i = 0; i < 2; i++){
+                                try {
+                                    for (int i = 0; i < 2; i++) {
                                         id[i] = Integer.parseInt(line.split(" ")[i].replaceAll("\\D", ""));
                                     }
                                     weith = Integer.parseInt(line.split(" ")[2].replaceAll("\\D", ""));
                                     tmpNode1 = new Node(id[0]);
                                     tmpNode2 = new Node(id[1]);
-                                    for(Node node : graph.getNodes()){
-                                        if(tmpNode1.getId() == node.getId()){
+                                    for (Node node : graph.getNodes()) {
+                                        if (tmpNode1.getId() == node.getId()) {
                                             tmpNode1 = node;
                                             flag1 = false;
                                         }
-                                        if(tmpNode2.getId() == node.getId()) {
+                                        if (tmpNode2.getId() == node.getId()) {
                                             tmpNode2 = node;
                                             flag2 = false;
                                         }
                                     }
-                                    if(flag1){
+                                    if (flag1) {
                                         graph.addNode(tmpNode1, tmpNode1.getId());
-                                        System.out.println("Add Node: " + tmpNode1.nodeToString());
                                     } else flag1 = true;
-                                    if(flag2){
+                                    if (flag2) {
                                         graph.addNode(tmpNode2, tmpNode2.getId());
-                                        System.out.println("Add Node: " + tmpNode2.nodeToString());
                                     } else flag2 = true;
                                     tmpEdge = new Edge(tmpNode1, tmpNode2);
                                     tmpEdge.setWeight(weith);
@@ -231,37 +240,40 @@ public class MainWindow extends JPanel {
                                     tmpEdge = null;
                                     tmpNode1 = null;
                                     tmpNode2 = null;
-                                } catch (NumberFormatException e){
+                                } catch (NumberFormatException e) {
                                     System.out.println("Sourse Exeption");
+                                    graphPanel.reset();
                                 }
                             }
                         }
-                        for(Node node : graph.getNodes()) {
+                        for (Node node : graph.getNodes()) {
                             if (node.getId() == sourceId) graph.setSource(node);
                         }
                         Integer X = 4200, Y = 40, sizE = 0;
                         Integer x = X, y = Y;
-                        while(sizE * sizE < graph.getNodes().size()){
+                        while (sizE * sizE < graph.getNodes().size()) {
                             sizE++;
                         }
-                        for(Node node : graph.getNodes()){
-                            if(x > X + 70 *(sizE - 1)){
+                        for (Node node : graph.getNodes()) {
+                            if (x > X + 70 * (sizE - 1)) {
                                 x = X;
                                 y += 70;
                             }
                             node.setCoord(x, y);
                             x += 70;
-                            System.out.println(node.nodeToString());
                         }
                         graph.stepRealisation = 0;
                         graph.setSolved(false);
                         graphPanel.uResetGraphPanel(graph);
                         repaint();
-                } catch (NullPointerException e){
-                    JOptionPane.showMessageDialog(null, "You didn't upload file");
-                    fileChooser.closeWind(); }
+                    } catch (NullPointerException e) {
+                        JOptionPane.showMessageDialog(null, "You didn't upload file");
+                        fileChooser.closeWind();
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
+                } catch (ArrayIndexOutOfBoundsException aiobe) {
+                    JOptionPane.showMessageDialog(null, "You can't upload this file");
                 }
             }
         });

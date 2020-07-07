@@ -107,7 +107,6 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
         Node selected = null;
         for(Node node : graph.getNodes()) {
             if(DrawUtils.isWithinBounds(e, node.getCoord())){
-                System.out.println(node.getX() + " " + node.getY());
                 selected = node;
                 break;
             }
@@ -173,7 +172,6 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 
         if(graph.stepRealisation == 0){
             graph.addNode(e.getPoint());
-            System.out.println(e.getX() + " " + e.getY());
         }
         graph.setSolved(false);
         repaint();
